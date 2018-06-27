@@ -1,15 +1,8 @@
 cmake_minimum_required(VERSION 3.8)
-project(cmake-demo CXX)
+project(winrt-install-demo CXX)
 
-find_package(CURL REQUIRED)
-find_package(OPENSSL REQUIRED)
-find_package(ZLIB REQUIRED)
+add_executable(winrt-install-demo src/main.cpp)
+set_property(TARGET winrt-install-demo APPEND PROPERTY LINK_FLAGS "/MANIFESTUAC:\"level='requireAdministrator' uiAccess='false'\"")
+set_property(TARGET winrt-install-demo PROPERTY CXX_STANDARD 17)
+set_property(TARGET winrt-install-demo PROPERTY CXX_STANDARD_REQUIRED ON)
 
-add_definitions("-DCURL_STATICLIB")
-SET(CMAKE_CXX_FLAGS_RELEASE "/MT" CACHE STRING "" FORCE)
-
-add_executable(cmake-demo src/main.cpp)
-set_property(TARGET cmake-demo PROPERTY CXX_STANDARD 17)
-set_property(TARGET cmake-demo PROPERTY CXX_STANDARD_REQUIRED ON)
-target_link_libraries(cmake-demo PRIVATE Ws2_32.lib Wldap32.lib ${OPENSSL_LIBRARIES} ${ZLIB_LIBRARIES} ${CURL_LIBRARIES})
-target_include_directories(cmake-demo PRIVATE ${CURL_INCLUDE_DIRS})
