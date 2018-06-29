@@ -7,7 +7,7 @@
 #include <sdkddkver.h>
 
 #ifndef NTDDI_WIN10_RS5
-#define NTDDI_WIN10_RS5 0x0A000005
+#define NTDDI_WIN10_RS5 0x0A000006
 #endif
 
 // The windowsapps library that comes with the Windows SDK contains C++/WinRT symbols
