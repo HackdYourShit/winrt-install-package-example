@@ -4,6 +4,11 @@
 #include <winrt/Windows.ApplicationModel.Store.Preview.InstallControl.h>
 #include <winrt/Windows.Management.Deployment.h>
 #include <windows.h>
+#include <sdkddkver.h>
+
+#ifndef NTDDI_WIN10_RS5
+#define NTDDI_WIN10_RS5 0x0A000005
+#endif
 
 // The windowsapps library that comes with the Windows SDK contains C++/WinRT symbols
 #pragma comment(lib, "windowsapp")
@@ -23,7 +28,11 @@ int main() {
 	AppInstallManager installManager;
 	AppInstallItem item = installManager.StartAppInstallAsync(winrt::to_hstring(MESSENGER_PRODUCT_ID), L"", false, true).get();
 	item.LaunchAfterInstall(false);
+
+// We can only disable notifications on RS5 or higher
+#if (WDK_NTDDI_VERSION >= NTDDI_WIN10_RS5)
 	item.CompletedInstallToastNotificationMode(AppInstallationToastNotificationMode::NoToast);
+#endif
 
 	HANDLE completedEvent = CreateEvent(NULL, true, false, "CompletedEvent");
 	item.StatusChanged([completedEvent](const AppInstallItem& sender, const IInspectable& item) {
@@ -34,7 +43,7 @@ int main() {
 	});
 
 	WaitForSingleObject(completedEvent, INFINITE);
-	std::cout << "\nThe application has been installed!\nTime to uninstall it..." << std::endl;
+	std::cout << "The application has been installed!\nTime to uninstall it..." << std::endl;
 	
 	// Now we uninstall the app we just installed. To do this, we need to find the full name of the package, which
 	// is not given to use from the AppInstallManager. We have to hope that there is a single package with the
